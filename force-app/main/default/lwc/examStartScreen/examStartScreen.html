@@ -1,0 +1,108 @@
+<template>
+  <template if:true={questionList}>
+    <div class="quiz-container">
+      <h2 class="quiz-title center-heading">{examId}</h2>
+
+      <!-- Question Navigator Panel -->
+      <div class="badge-panel">
+        <p><strong>Question Review:</strong></p>
+        <div class="badge-container">
+          <template for:each={questions} for:item="q">
+            <button key={q.questionId}
+                    class={q.badgeClass}
+                    onclick={handleBadgeClick}
+                    data-index={q.questionNumber}>
+              {q.questionNumber}
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Progress and Timer -->
+      <div class="quiz-meta">
+        <span class="question-count">Question {currentQuestionNumber} of {questions.length}</span>
+        <span class="timer">Minutes: {minutes} | Seconds: {seconds}</span>
+      </div>
+
+      <!-- Question -->
+      <div class="quiz-question">
+        <p><strong>Q{currentQuestionNumber}:</strong> {currentQuestion.questionText}</p>
+      </div>
+
+      <!-- Options -->
+      <div class="quiz-options">
+        <template for:each={currentQuestion.optionList} for:item="opt">
+          <div key={opt.value} class={opt.cssClass}>
+            <input type="radio"
+                   name="singleChoice"
+                   value={opt.value}
+                   data-option={opt.value}
+                   checked={opt.checked}
+                   onchange={handleOptionChange} />
+            <label>{opt.label}</label>
+          </div>
+        </template>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div class="quiz-navigation">
+        <!-- ✅ Always visible Review button -->
+        <lightning-button
+            label="Review"
+            variant="neutral"
+            onclick={handleReview}
+            class="nav-button review-button">
+        </lightning-button>
+
+        <!-- Previous button -->
+        <template if:true={showPrevious}>
+          <lightning-button
+              label="Previous"
+              variant="brand"
+              onclick={handlePrevious}
+              class="nav-button">
+          </lightning-button>
+        </template>
+
+        <!-- Submit button -->
+        <template if:true={showSubmit}>
+          <lightning-button
+              label="Submit"
+              variant="brand"
+              onclick={handleSubmit}
+              disabled={isSubmitDisabled}
+              title={submitButtonTooltip}
+              class="nav-button">
+          </lightning-button>
+        </template>
+
+        <!-- Next button -->
+        <template if:false={showSubmit}>
+          <lightning-button
+              label="Next"
+              variant="brand"
+              onclick={handleNext}
+              class="nav-button">
+          </lightning-button>
+        </template>
+      </div>
+    </div>
+  </template>
+  <template if:true={showResult}>
+    <div class="result-card">
+        <div class="icon-container">
+            <lightning-icon icon-name="utility:award" alternative-text="Trophy" size="large"></lightning-icon>
+        </div>
+        <h1 class="title">Your Result</h1>
+        <p class="exam-name">{examId}</p>
+        <p class="percentage">Correct Answers: <b>{correct}</b></p>
+        <p class="percentage">Wrong Answers: <b>{wrong}</b></p>
+       
+    </div>
+</template>
+
+
+  <template if:false={currentQuestion}>
+    <p>Loading questions...</p>
+  </template>
+</template>

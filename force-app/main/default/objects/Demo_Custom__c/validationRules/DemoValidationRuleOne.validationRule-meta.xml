@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>DemoValidationRuleOne</fullName>
+    <active>true</active>
+    <description>created for Demo.</description>
+    <errorConditionFormula>AND(
+ Field_One__c,
+ ISBLANK(Field_Two__c)
+)</errorConditionFormula>
+    <errorMessage>Please enter Field two if Field one is checked.</errorMessage>
+</ValidationRule>

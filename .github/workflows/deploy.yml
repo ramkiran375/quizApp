@@ -1,0 +1,30 @@
+name: Deploy to Salesforce
+
+on:
+  push:
+    branches:
+      - main  # or 'master', depending on your repo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Salesforce CLI
+        run: npm install sfdx-cli --global
+
+      - name: Authenticate to Salesforce
+        env:
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+          SF_TOKEN: ${{ secrets.SF_TOKEN }}
+        run: |
+          echo "Logging into Salesforce..."
+          sfdx auth:login -r https://login.salesforce.com -u $SF_USERNAME -p "${SF_PASSWORD}${SF_TOKEN}" -a TargetOrg
+
+      - name: Deploy metadata
+        run: |
+          sfdx force:source:deploy -p force-app -u TargetOrg -w 10

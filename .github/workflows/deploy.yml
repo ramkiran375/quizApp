@@ -1,39 +1,35 @@
-name: Auto Deploy to Target Org
+name: Auto Deploy to Target Org (Org B)
 
 on:
   push:
     branches:
-      - main  # runs automatically on commits to main
+      - main  # triggers whenever you push to main branch
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repo
-      - name: Checkout repository
+      # Step 1: Checkout your repo
+      - name: Checkout code
         uses: actions/checkout@v3
 
       # Step 2: Install Salesforce CLI
       - name: Install Salesforce CLI
-        run: npm install --global sfdx-cli
+        run: npm install @salesforce/cli --global
 
-      # Step 3: Authenticate to Target Org
-      - name: Authenticate to Salesforce
-        env:
-          SF_USERNAME: ${{ secrets.SF_USERNAME }}
-          SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
-          SF_TOKEN: ${{ secrets.SF_TOKEN }}
+      # Step 3: Authenticate to Target Org using the secret
+      - name: Authenticate to Org B
         run: |
-          echo "Authenticating to Salesforce..."
-          sfdx auth:login -r https://login.salesforce.com -u "$SF_USERNAME" -p "${SF_PASSWORD}${SF_TOKEN}" -a TargetOrg
+          echo "${{ secrets.SF_AUTH_URL_ORG_B }}" > authurl.txt
+          sf org login sfdx-url -f authurl.txt -a TargetOrg
 
-      # Step 4: Deploy metadata
-      - name: Deploy metadata to Target Org
+      # Step 4: Deploy metadata from force-app folder
+      - name: Deploy metadata to Org B
         run: |
-          echo "Deploying metadata to Target Org..."
-          sfdx force:source:deploy -p force-app -u TargetOrg -w 10
+          sf project deploy start --source-dir force-app --target-org TargetOrg --ignore-conflicts --wait 10 --verbose
 
-      # Step 5: Confirm deployment success
-      - name: Confirm Deployment
-        run: echo "✅ Deployment completed successfully!"
+      # (Optional) Step 5: Run Apex Tests
+      - name: Run Apex Tests
+        run: |
+          sf apex run test --target-org TargetOrg --result-format human --code-coverage --wait 10

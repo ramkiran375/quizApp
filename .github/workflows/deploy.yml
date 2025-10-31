@@ -1,30 +1,39 @@
-name: Deploy to Salesforce
+name: Auto Deploy to Target Org
 
 on:
   push:
     branches:
-      - main  # or 'master', depending on your repo
+      - main  # runs automatically on commits to main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Install Salesforce CLI
       - name: Install Salesforce CLI
-        run: npm install sfdx-cli --global
+        run: npm install --global sfdx-cli
 
+      # Step 3: Authenticate to Target Org
       - name: Authenticate to Salesforce
         env:
           SF_USERNAME: ${{ secrets.SF_USERNAME }}
           SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
           SF_TOKEN: ${{ secrets.SF_TOKEN }}
         run: |
-          echo "Logging into Salesforce..."
-          sfdx auth:login -r https://login.salesforce.com -u $SF_USERNAME -p "${SF_PASSWORD}${SF_TOKEN}" -a TargetOrg
+          echo "Authenticating to Salesforce..."
+          sfdx auth:login -r https://login.salesforce.com -u "$SF_USERNAME" -p "${SF_PASSWORD}${SF_TOKEN}" -a TargetOrg
 
-      - name: Deploy metadata
+      # Step 4: Deploy metadata
+      - name: Deploy metadata to Target Org
         run: |
+          echo "Deploying metadata to Target Org..."
           sfdx force:source:deploy -p force-app -u TargetOrg -w 10
+
+      # Step 5: Confirm deployment success
+      - name: Confirm Deployment
+        run: echo "✅ Deployment completed successfully!"

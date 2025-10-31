@@ -11,7 +11,7 @@
     margin-bottom: 1rem;
     color: #f9f9f9;
     text-align: center;
-    background-color: #4b0082;
+    background-color: #009ddc;
     padding: 0.5rem;
     border-radius: 4px;
 }
@@ -105,7 +105,7 @@
 }
 
 .badge.unanswered {
-    background-color: #f44336; /* Red */
+    background-color: #ff5e00; /* Red */
 }
 
 .badge:hover {

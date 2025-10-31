@@ -1,4 +1,4 @@
-public  class QuestionController {
+public without sharing class QuestionController {
 
     @AuraEnabled(cacheable=true)
     public static List<QuestionWrapper> getQuestionsByExamId(String examId) {

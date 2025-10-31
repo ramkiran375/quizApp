@@ -5,6 +5,6 @@ public with sharing class SampleHelloWorld {
         if (String.isBlank(name)) {
             return 'Hello, Salesforce!';
         }
-        return 'Hellodata1111, ' + name + '!';
+        return 'Hellodata1111new, ' + name + '!';
     }
 }
